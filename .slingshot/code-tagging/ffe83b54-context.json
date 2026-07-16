@@ -1,0 +1,15 @@
+{
+  "filename": ".env.local",
+  "path": ".env.local",
+  "version": "1.1",
+  "files": {},
+  "promptMessage": {
+    "7b346a8d": {
+      "value": "use this and push\n\ngit remote add origin https://github.com/Govardhan8/shoulder-injury.git\ngit branch -M master\ngit push -u origin master"
+    }
+  },
+  "localPrompts": {},
+  "remotePrompts": {},
+  "figma": {},
+  "jira": {}
+}
