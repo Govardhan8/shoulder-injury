@@ -226,7 +226,7 @@ export default function EditPlayer() {
                 name='name'
                 value={formData.name}
                 onChange={handleInputChange}
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent'
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900'
                 placeholder='Enter player name'
                 required
               />
@@ -245,7 +245,7 @@ export default function EditPlayer() {
                 name='dateOfJoining'
                 value={formData.dateOfJoining}
                 onChange={handleInputChange}
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent'
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900'
                 required
               />
             </div>
@@ -263,7 +263,7 @@ export default function EditPlayer() {
                 id='photo'
                 accept='image/*'
                 onChange={handleFileChange}
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent'
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900'
               />
               <p className='text-sm text-gray-500 mt-1'>
                 Leave empty to keep current photo

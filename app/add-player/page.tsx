@@ -167,7 +167,7 @@ export default function AddPlayer() {
                 name='name'
                 value={formData.name}
                 onChange={handleInputChange}
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent'
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900'
                 placeholder='Enter player name'
                 required
               />
@@ -186,7 +186,7 @@ export default function AddPlayer() {
                 name='dateOfJoining'
                 value={formData.dateOfJoining}
                 onChange={handleInputChange}
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent'
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900'
                 required
               />
             </div>
@@ -204,7 +204,7 @@ export default function AddPlayer() {
                 id='photo'
                 accept='image/*'
                 onChange={handleFileChange}
-                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent'
+                className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-gray-900'
                 required
               />
               {previewUrl && (

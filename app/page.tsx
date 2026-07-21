@@ -131,7 +131,7 @@ export default function Home() {
                     sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                   />
                   {showEditButton === player._id && (
-                    <div className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10'>
+                    <div className='absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center gap-4 z-10'>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -141,6 +141,16 @@ export default function Home() {
                         aria-label='Edit player'
                       >
                         Edit Player
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowEditButton(null);
+                        }}
+                        className='bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors shadow-lg'
+                        aria-label='Cancel edit'
+                      >
+                        Cancel
                       </button>
                     </div>
                   )}
