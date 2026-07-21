@@ -1,25 +1,68 @@
 "use client";
 
-import { useState, FormEvent, ChangeEvent, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useState, FormEvent, ChangeEvent, useRef, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function AddPlayer() {
+interface Player {
+  _id: string;
+  name: string;
+  photoUrl: string;
+  dateOfJoining: string;
+}
+
+export default function EditPlayer() {
   const router = useRouter();
+  const params = useParams();
+  const playerId = params.id as string;
+
   const [formData, setFormData] = useState({
     name: "",
     dateOfJoining: "",
   });
+  const [currentPhotoUrl, setCurrentPhotoUrl] = useState<string>("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [isFlipped, setIsFlipped] = useState(false);
   const lastTapRef = useRef<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const DOUBLE_TAP_DELAY = 300; // ms
+
+  useEffect(() => {
+    fetchPlayerData();
+  }, [playerId]);
+
+  const fetchPlayerData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/players/${playerId}`);
+      const result = await response.json();
+
+      if (result.success) {
+        const player: Player = result.data;
+        setFormData({
+          name: player.name,
+          dateOfJoining: new Date(player.dateOfJoining)
+            .toISOString()
+            .split("T")[0],
+        });
+        setCurrentPhotoUrl(player.photoUrl);
+        setPreviewUrl(player.photoUrl);
+      } else {
+        setError(result.error || "Failed to fetch player data");
+      }
+    } catch (err) {
+      setError("An error occurred while fetching player data");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -91,18 +134,23 @@ export default function AddPlayer() {
     e.preventDefault();
     setError("");
 
-    if (!formData.name || !formData.dateOfJoining || !selectedFile) {
-      setError("All fields are required");
+    if (!formData.name || !formData.dateOfJoining) {
+      setError("Name and date of joining are required");
       return;
     }
 
     try {
       setUploading(true);
 
-      const photoUrl = await uploadToCloudinary(selectedFile);
+      let photoUrl = currentPhotoUrl;
 
-      const response = await fetch("/api/players", {
-        method: "POST",
+      // Only upload new image if user selected one
+      if (selectedFile) {
+        photoUrl = await uploadToCloudinary(selectedFile);
+      }
+
+      const response = await fetch(`/api/players/${playerId}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -118,7 +166,7 @@ export default function AddPlayer() {
       if (result.success) {
         router.push("/");
       } else {
-        setError(result.error || "Failed to add player");
+        setError(result.error || "Failed to update player");
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
@@ -127,6 +175,17 @@ export default function AddPlayer() {
       setUploading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center'>
+        <div className='text-center'>
+          <div className='inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600'></div>
+          <p className='mt-4 text-gray-600'>Loading player data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8'>
@@ -140,10 +199,10 @@ export default function AddPlayer() {
               ← Back to Players
             </Link>
             <h1 className='text-3xl font-bold text-gray-900 mt-4'>
-              Add New Player
+              Edit Player
             </h1>
             <p className='text-gray-600 mt-2'>
-              Fill in the details to add a player with shoulder injury
+              Update player details and photo
             </p>
           </div>
 
@@ -196,7 +255,7 @@ export default function AddPlayer() {
                 htmlFor='photo'
                 className='block text-sm font-medium text-gray-700 mb-2'
               >
-                Player Photo *
+                Player Photo
               </label>
               <input
                 ref={fileInputRef}
@@ -205,8 +264,10 @@ export default function AddPlayer() {
                 accept='image/*'
                 onChange={handleFileChange}
                 className='w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent'
-                required
               />
+              <p className='text-sm text-gray-500 mt-1'>
+                Leave empty to keep current photo
+              </p>
               {previewUrl && (
                 <div
                   className='mt-4 relative h-64 w-full'
@@ -247,7 +308,7 @@ export default function AddPlayer() {
                         className='object-cover'
                       />
                       <div className='absolute bottom-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-xs font-medium'>
-                        Double tap to edit
+                        Double tap to change
                       </div>
                     </div>
 
@@ -262,7 +323,7 @@ export default function AddPlayer() {
                     >
                       <div className='text-white text-center'>
                         <h3 className='text-xl font-bold mb-2'>
-                          Edit Player Photo
+                          Change Player Photo
                         </h3>
                         <p className='text-sm text-indigo-100'>
                           Choose an action below
@@ -302,7 +363,7 @@ export default function AddPlayer() {
                 disabled={uploading}
                 className='flex-1 bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors'
               >
-                {uploading ? "Adding Player..." : "Add Player"}
+                {uploading ? "Updating Player..." : "Update Player"}
               </button>
               <Link
                 href='/'
